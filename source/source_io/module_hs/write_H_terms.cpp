@@ -78,7 +78,6 @@ static void gather_and_write(const std::string& prefix,
     const int nbasis = hR.get_nbasis();
 #ifdef __MPI
     Parallel_Orbitals serialV;
-    serialV.init(nbasis, nbasis, nbasis, pv.comm());
     serialV.set_serial(nbasis, nbasis);
     serialV.set_atomic_trace(iat2iwt, nat, nbasis);
     hamilt::HContainer<double> hr_serial(&serialV);
@@ -411,6 +410,8 @@ void write_h_exx(WriteHParams& params)
     ModuleBase::TITLE("ModuleIO", "write_h_exx");
     ModuleBase::timer::start("ModuleIO", "write_h_exx");
 
+    // Multi-k out_mat_h_exx is rejected upstream at the call site (setup_exx_h_params in
+    // ctrl_scf_lcao.cpp); this function is only reached on the gamma-only path.
     const UnitCell& ucell = *params.ucell;
     const Parallel_Orbitals& pv = *params.pv;
     const K_Vectors& kv = *params.kv;
